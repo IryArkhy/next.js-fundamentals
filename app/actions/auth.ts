@@ -8,7 +8,7 @@ import {
   deleteSession,
 } from '@/lib/auth'
 import { getUserByEmail } from '@/lib/dal'
-import { mockDelay } from '@/lib/utils'
+// import { mockDelay } from '@/lib/utils'
 import { redirect } from 'next/navigation'
 
 // Define Zod schema for signin validation
@@ -56,7 +56,7 @@ export const signin = async (formData: FormData): Promise<ActionResponse> => {
       }
     }
 
-    const user = await getUserByEmail()
+    const user = await getUserByEmail(data.email)
 
     if (!user) {
       return {
@@ -96,8 +96,7 @@ export const signin = async (formData: FormData): Promise<ActionResponse> => {
   }
 }
 
-export const signUp = async (formData: FormData) => {
-  console.log('here from the server')
+export const signup = async (formData: FormData) => {
   try {
     const data = {
       email: formData.get('email') as string,
