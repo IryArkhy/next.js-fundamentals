@@ -3,7 +3,7 @@ import { getSession } from './auth'
 import { eq } from 'drizzle-orm'
 import { cache } from 'react'
 import { issues, users } from '@/db/schema'
-// import { mockDelay } from './utils'
+import { mockDelay } from './utils'
 
 /**
  * DAL is data access layer - a utility functions that are used to fetch data
@@ -40,5 +40,22 @@ export const getUserByEmail = async (email: string) => {
   } catch (error) {
     console.log(error)
     return null
+  }
+}
+
+export async function getIssues() {
+  try {
+    await mockDelay(2000)
+
+    const result = await db.query.issues.findMany({
+      with: {
+        user: true,
+      },
+      orderBy: (issues, { desc }) => [desc(issues.createdAt)],
+    })
+    return result
+  } catch (error) {
+    console.error('Error fetching issues:', error)
+    throw new Error('Failed to fetch issues')
   }
 }
