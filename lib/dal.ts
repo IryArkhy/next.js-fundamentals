@@ -1,3 +1,5 @@
+import { unstable_cacheTag as cacheTag } from 'next/cache'
+
 import { db } from '@/db'
 import { getSession } from './auth'
 import { eq } from 'drizzle-orm'
@@ -5,7 +7,7 @@ import { cache } from 'react'
 import { issues, users } from '@/db/schema'
 import { mockDelay } from './utils'
 
-export const getCurrentUser = async () => {
+export const getCurrentUser = cache(async () => {
   await mockDelay(1000)
   const session = await getSession()
   if (!session) {
@@ -23,7 +25,7 @@ export const getCurrentUser = async () => {
     console.error(e)
     return null
   }
-}
+})
 
 export const getUserByEmail = async (email: string) => {
   try {
@@ -39,6 +41,13 @@ export const getUserByEmail = async (email: string) => {
 }
 
 export async function getIssues() {
+  /**
+   * There is a problem with this. As soon as you create a new issue
+   * an you do soft refresh (Command + R) in the browser, you won;t get a new issue.
+   * Only when you do hard refresh (Command + Shift + R)
+   */
+  'use cache'
+  cacheTag('issues')
   try {
     await mockDelay(1000)
     const result = await db.query.issues.findMany({
