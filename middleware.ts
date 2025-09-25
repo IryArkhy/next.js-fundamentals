@@ -2,6 +2,9 @@ import { headers } from 'next/headers'
 import { NextResponse, type NextRequest } from 'next/server'
 
 export async function middleware(request: NextRequest) {
+  /**
+   * THIS CODE runs the EDGE RUNTIME (!)
+   */
   // Check if the request is for the API routes
   if (request.nextUrl.pathname.startsWith('/api')) {
     // Get the Authorization header
